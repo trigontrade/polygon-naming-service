@@ -12,10 +12,40 @@ const main = async () => {
 
   const domainAddress = await domainContract.getAddress("doom");
   console.log("Owner of domain doom:", domainAddress);
-	
+
+  let txnSetEmail = await domainContract.setEmail("doom", "test@testemail.com");
+  await txnSetEmail.wait();
+
+  const domainEmail = await domainContract.getEmail("doom");
+  console.log("Email of domain doom:", domainEmail);
+
+  let txnSetContent = await domainContract.setContent("doom", "doom is when everyone only eats spam");
+  await txnSetContent.wait();
+
+  const domainContent = await domainContract.getContent("doom");
+  console.log("Content of domain doom:", domainContent);
+
 	// Trying to set a record that doesn't belong to me!
-  txn = await domainContract.connect(randomPerson).setRecord("doom", "Haha my domain now!");
-  await txn.wait();
+  console.log("...Testing set functions from another user")
+
+  let testContent = "Haha my domain now!";
+  try {
+    let txnOtherSetContent = await domainContract.connect(randomPerson).setContent("doom", testContent);
+  }
+  catch(e) {
+    console.log(e.message);
+    console.log("content: '", testContent, "' not set");
+  }
+
+  let testEmail = "ScammyMcScammer@scammers-inc.evil";
+  try {
+    let txnOtherSetEmail = await domainContract.connect(randomPerson).setEmail("doom", testEmail);
+  }
+  catch(e) {
+    console.log(e.message);
+    console.log("Email: '", testEmail, "' not set");
+  }
+
 }
 
 const runMain = async () => {
