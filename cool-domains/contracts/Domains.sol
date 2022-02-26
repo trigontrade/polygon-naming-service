@@ -48,6 +48,9 @@ contract Domains is ERC721URIStorage {
         }
     }
 
+
+    mapping (uint => string) public names;
+
     struct Domain {
         address registrant;
         address controller;
@@ -85,10 +88,6 @@ contract Domains is ERC721URIStorage {
             abi.encodePacked(
                 '{"name": "',
                 _name,
-//                '"registrant":',
-//                domains[name].registrant,
-//                '"controller":',
-//                domains[name].controller,
                 '", "description": "A domain on the Adverb Name Service", "image": "data:image/svg+xml;base64,',
                 Base64.encode(bytes(finalSvg)),
                 '","length":"',
@@ -101,14 +100,16 @@ contract Domains is ERC721URIStorage {
 
         string memory finalTokenUri = string( abi.encodePacked("data:application/json;base64,", json));
 
-            console.log("\n--------------------------------------------------------");
+        console.log("\n--------------------------------------------------------");
         console.log("Final tokenURI", finalTokenUri);
         console.log("--------------------------------------------------------\n");
 
         _safeMint(msg.sender, newRecordId);
         _setTokenURI(newRecordId, finalTokenUri);
+        
         domains[name].registrant = msg.sender;
         domains[name].controller = msg.sender;
+        names[newRecordId] = name;
 
         _tokenIds.increment();
     }
@@ -165,5 +166,20 @@ contract Domains is ERC721URIStorage {
         (bool success, ) = msg.sender.call{value: amount}("");
         require(success, "Failed to withdraw Matic");
     } 
+
+    function getAllNames() public view returns (string[] memory) {
+        console.log("Getting all names from contract");
+        string[] memory allNames = new string[](_tokenIds.current());
+        for (uint i = 0; i < _tokenIds.current(); i++) {
+            allNames[i] = names[i];
+            console.log("Name for token %d is %s", i, allNames[i]);
+        }
+
+        return allNames;
+    }
+
+    function valid(string calldata name) public pure returns(bool) {
+        return StringUtils.strlen(name) >= 3 && StringUtils.strlen(name) <= 10;
+    }
 
 }
