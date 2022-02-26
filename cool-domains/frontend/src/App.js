@@ -141,6 +141,14 @@ const App = () => {
 
 	// Form to enter domain name and data
 	const renderInputForm = () =>{
+		// If not on Polygon Mumbai Testnet, render "Please connect to Polygon Mumbai Testnet"
+		if (network !== 'Polygon Mumbai Testnet') {
+			return (
+				<div className="connect-wallet-container">
+					<p>Please connect to the Polygon Mumbai Testnet</p>
+				</div>
+			);
+		}
 		return (
 			<div className="form-container">
 				<div className="first-row">
