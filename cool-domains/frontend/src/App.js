@@ -3,6 +3,9 @@ import './styles/App.css';
 import twitterLogo from './assets/twitter-logo.svg';
 import { ethers } from "ethers";
 import contractAbi from './utils/contractABI.json'
+import polygonLogo from './assets/polygonlogo.png';
+import ethLogo from './assets/ethlogo.png';
+import { networks } from './utils/networks';
 
 // Constants
 const TWITTER_HANDLE = '_buildspace';
@@ -20,6 +23,8 @@ const App = () => {
 	// Add some state data properties
 	const [domain, setDomain] = useState('');
 	const [record, setRecord] = useState('');
+	// Create a stateful variable to store the network
+	const [network, setNetwork] = useState('');
 
 	const connectWallet = async () => {
 		try {
@@ -62,6 +67,18 @@ const App = () => {
 		} else {
 			console.log('No authorized account found');
 		}
+
+		// check the user's network chain ID
+		const chainId = await ethereum.request({ method: 'eth_chainId' });
+		setNetwork(networks[chainId]);
+
+		ethereum.on('chainChanged', handleChainChanged);
+		
+		// Reload the page when they change networks
+		function handleChainChanged(_chainId) {
+			window.location.reload();
+		}
+
 	};
 
 	const mintDomain = async () => {
@@ -168,8 +185,13 @@ const App = () => {
 				<div className="header-container">
 					<header>
 						<div className="left">
-						<p className="title">Adverb Name Service</p>
-						<p className="subtitle">The most modified API on the blockchain!</p>
+							<p className="title">Adverb Name Service</p>
+							<p className="subtitle">The most modified API on the blockchain!</p>
+						</div>
+						{/* Display a logo and wallet connection status*/}
+						<div className="right">
+							<img alt="Network logo" className="logo" src={ network.includes("Polygon") ? polygonLogo : ethLogo} />
+							{ currentAccount ? <p> Wallet: {currentAccount.slice(0, 6)}...{currentAccount.slice(-4)} </p> : <p> Not connected </p> }
 						</div>
 					</header>
 				</div>
