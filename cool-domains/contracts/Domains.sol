@@ -50,6 +50,8 @@ contract Domains is ERC721URIStorage {
 
 
     mapping (uint => string) public names;
+    mapping(string => address) public domains;
+    mapping(string => string) public records;
 
     struct Domain {
         address registrant;
@@ -59,12 +61,12 @@ contract Domains is ERC721URIStorage {
     }
 
     // custom "mapping" data type to store their names
-    mapping(string => Domain) public domains;
+    //mapping(string => Domain) public domains;
     
     // A register function that adds their names to our mapping
     function register(string calldata name) public payable{
         // Check that the name is unregistered
-        require(domains[name].registrant == address(0));
+        require(domains[name] == address(0));
 
         uint _price = price(name);
 
@@ -107,8 +109,9 @@ contract Domains is ERC721URIStorage {
         _safeMint(msg.sender, newRecordId);
         _setTokenURI(newRecordId, finalTokenUri);
         
-        domains[name].registrant = msg.sender;
-        domains[name].controller = msg.sender;
+        //domains[name].registrant = msg.sender;
+        //domains[name].controller = msg.sender;
+        domains[name] = msg.sender;
         names[newRecordId] = name;
 
         _tokenIds.increment();
@@ -118,19 +121,19 @@ contract Domains is ERC721URIStorage {
     // This will give us the domain owners' address
     function getAddress(string calldata name) public view returns (address) {
         // Check that the owner is the transaction sender
-        return domains[name].controller;
-    }
-
-    function setRecord(string calldata name, Domain calldata domain) public {
-        // Check that the owner is the transaction sender
-        require(domains[name].controller == msg.sender);
-        domains[name] = domain;
-    }
-
-    function getRecord(string calldata name) public view returns(Domain memory) {
         return domains[name];
     }
 
+    function setRecord(string calldata name, string calldata record) public {
+        // Check that the owner is the transaction sender
+        require(domains[name] == msg.sender);
+        records[name] = record;
+    }
+
+    function getRecord(string calldata name) public view returns(string memory) {
+        return records[name];
+    }
+    /*
     function setEmail(string calldata name, string calldata email) public {
         // Check that the owner is the transaction sender
         require(domains[name].controller == msg.sender, "only the domain controller can set it's 'email'");
@@ -150,7 +153,7 @@ contract Domains is ERC721URIStorage {
     function getContent(string calldata name) public view returns(string memory) {
         return domains[name].content;
     }
-
+    */
     modifier onlyOwner() {
     require(isOwner());
     _;
