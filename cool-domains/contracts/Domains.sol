@@ -15,6 +15,8 @@ import "hardhat/console.sol";
 // We inherit the contract we imported. This means we'll have access
 // to the inherited contract's methods.
 contract Domains is ERC721URIStorage {
+    address payable public owner;
+
     // Magic given to us by OpenZeppelin to help us keep track of tokenIds.
     using Counters for Counters.Counter;
     Counters.Counter private _tokenIds;
@@ -28,6 +30,7 @@ contract Domains is ERC721URIStorage {
 
     // We make the contract "payable" by adding this to the constructor
     constructor(string memory _tld) payable ERC721("Adverb Name Service", "ANS"){
+        owner = payable(msg.sender);
         tld = _tld;
         console.log("%s name service deployed", _tld);
     }
@@ -146,4 +149,21 @@ contract Domains is ERC721URIStorage {
     function getContent(string calldata name) public view returns(string memory) {
         return domains[name].content;
     }
+
+    modifier onlyOwner() {
+    require(isOwner());
+    _;
+    }
+
+    function isOwner() public view returns (bool) {
+    return msg.sender == owner;
+    }
+
+    function withdraw() public onlyOwner {
+        uint amount = address(this).balance;
+        
+        (bool success, ) = msg.sender.call{value: amount}("");
+        require(success, "Failed to withdraw Matic");
+    } 
+
 }
