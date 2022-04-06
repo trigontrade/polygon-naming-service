@@ -1,15 +1,6 @@
-# Basic Sample Hardhat Project
+Something broke! I had this working on Vercel, but last time I loaded it, it wasn't working.
+I'm currently working on another project, but will circle back.
 
-This project demonstrates a basic Hardhat use case. It comes with a sample contract, a test for that contract, a sample script that deploys that contract, and an example of a task implementation, which simply lists the available accounts.
+# Build your own domain service on a Polygon L2 in a weekend
 
-Try running some of the following tasks:
-
-```shell
-npx hardhat accounts
-npx hardhat compile
-npx hardhat clean
-npx hardhat test
-npx hardhat node
-node scripts/sample-script.js
-npx hardhat help
-```
+This repo is my implementation of buildspace.so's guided project.
