@@ -13,7 +13,7 @@ const TWITTER_LINK = `https://twitter.com/${TWITTER_HANDLE}`;
 
 // Add the domain you will be minting
 const tld = '.brock';
-const CONTRACT_ADDRESS = "0x06aC090648997b2dAf6601aabF32d6a9e1216823";
+const CONTRACT_ADDRESS = "0xC9B7fD26Fae123DA2B575D5854EAfB6d743C655d";
 
 
 const App = () => {
@@ -90,7 +90,7 @@ const App = () => {
 				// Try to switch to the Mumbai testnet
 				await window.ethereum.request({
 					method: 'wallet_switchEthereumChain',
-					params: [{ chainId: '0x13881' }], // Check networks.js for hexadecimal network ids
+					params: [{ chainId: '0x1c03' }], // Check networks.js for hexadecimal network ids
 				});
 			} catch (error) {
 				// This error code means that the chain we want has not been added to MetaMask
@@ -101,15 +101,15 @@ const App = () => {
 							method: 'wallet_addEthereumChain',
 							params: [
 								{	
-									chainId: '0x13881',
-									chainName: 'Polygon Mumbai Testnet',
-									rpcUrls: ['https://rpc-mumbai.maticvigil.com/'],
+									chainId: '0x1c03',
+									chainName: 'Bitrock Mainnet',
+									rpcUrls: ['https://connect.bit-rock.io'],
 									nativeCurrency: {
-											name: "Mumbai Matic",
-											symbol: "MATIC",
+											name: "Bitrock",
+											symbol: "BROCK",
 											decimals: 18
 									},
-									blockExplorerUrls: ["https://mumbai.polygonscan.com/"]
+									blockExplorerUrls: ["https://explorer.bit-rock.io/"]
 								},
 							],
 						});
@@ -135,7 +135,7 @@ const App = () => {
 		}
 		// Calculate price based on length of domain (change this to match your contract)	
 		// 3 chars = 0.5 MATIC, 4 chars = 0.3 MATIC, 5 or more = 0.1 MATIC
-		const price = domain.length === 3 ? '0.5' : domain.length === 4 ? '0.3' : '0.1';
+		const price = domain.length === 4 ? '100' : domain.length === 6 ? '50' : '5';
 		console.log("Minting domain", domain, "with price", price);
 	  try {
 		const { ethereum } = window;
@@ -151,13 +151,13 @@ const App = () => {
 	
 				// Check if the transaction was successfully completed
 				if (receipt.status === 1) {
-					console.log("Domain minted! https://mumbai.polygonscan.com/tx/"+tx.hash);
+					console.log("Domain minted! https://explorer.bit-rock.io/tx/"+tx.hash);
 					
 					// Set the record for the domain
 					tx = await contract.setRecord(domain, record);
 					await tx.wait();
 	
-					console.log("Record set! https://mumbai.polygonscan.com/tx/"+tx.hash);
+					console.log("Record set! https://explorer.bit-rock.io/tx/"+tx.hash);
 					
 					setRecord('');
 					setDomain('');
@@ -232,7 +232,7 @@ const App = () => {
 
 	// This will run any time currentAccount or network are changed
 	useEffect(() => {
-		if (network === 'Polygon Mumbai Testnet') {
+		if (network === 'Bitrock Mainnet') {
 			fetchMints();
 		}
 	}, [currentAccount, network]);
@@ -250,11 +250,11 @@ const App = () => {
 
 	// Form to enter domain name and data
 	const renderInputForm = () =>{
-		// If not on Polygon Mumbai Testnet, render "Please connect to Polygon Mumbai Testnet"
+		// If not on brock, render "Please connect to brock"
 		if (network !== 'Polygon Mumbai Testnet') {
 			return (
 				<div className="connect-wallet-container">
-					<h2>Please switch to Polygon Mumbai Testnet</h2>
+					<h2>Please switch to Bitrock</h2>
 					{/* This button will call our switch network function */}
 					<button className='cta-button mint-button' onClick={switchNetwork}>Click here to switch</button>
 				</div>
@@ -310,7 +310,7 @@ const App = () => {
 							return (
 								<div className="mint-item" key={index}>
 									<div className='mint-row'>
-										<a className="link" href={`https://testnets.opensea.io/assets/mumbai/${CONTRACT_ADDRESS}/${mint.id}`} target="_blank" rel="noopener noreferrer">
+										<a className="link" href={`https://explorer.bit-rock.io/${CONTRACT_ADDRESS}/${mint.id}`} target="_blank" rel="noopener noreferrer">
 											<p className="underlined">{' '}{mint.name}{tld}{' '}</p>
 										</a>
 										{/* If mint.owner is currentAccount, add an "edit" button*/}
